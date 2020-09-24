@@ -45,7 +45,7 @@ namespace Lab4
         }
     }
 
-    class Utility<T> {
+    class Utility<T> where T : IComparable<T> {
         private String sortName;
 
 
@@ -70,15 +70,18 @@ namespace Lab4
             {
                 for (int j = 0; j < data.Count; j++)
                 {
-                    T temp1 = data[j]; //get first desk
+                    T temp1 = data[j]; 
                     T temp2 = data[j + 1];
-                    if(temp1.CompareTo(temp2) > 0)
+                    if(temp1.CompareTo(temp2) > 0) //If first object greater than second object swap
                     {
-
+                        //Swap
+                        data[i] = temp1;
+                        data[j] = temp2; 
                     }
                 }
             }
-            return data; //stubbed to return list
+
+            return data; //returns stubbed list
         }
 
         /**
