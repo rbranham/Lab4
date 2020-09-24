@@ -25,7 +25,7 @@ namespace Lab4
             l.Add(new Desk(25.13, 3, "C"));
             l.Add(new Desk(5.85, 4, "D"));
 
-            for
+
             company.setList(l); //Set list to company for test
             company.askUtility();//Sets up utility
             company.mainSortingTest();
@@ -102,10 +102,10 @@ namespace Lab4
 
         public override List<T> sort(List<T> data)
         {
-            //Call delegated sort
-            data = u.sort(data); // Sorts data
 
-            //Logic for how to print?? 
+            //Call delegated sort
+            data = u.sort(data); // Sorts data  
+
 
             if (u is BSUtility<T>) //Check for Bubble Sort
             {
@@ -117,8 +117,21 @@ namespace Lab4
             }
             else if (this.getSortName() == "Quick Sort")  //Check Quicksort
             {
-                //Print logic for quick sort
+                foreach (T t in data) //Print logic for Quicksort
+                {
+                    Console.WriteLine(t.getPrice() + " " + t.getName() + " " + t.getID());
+                }
             }
+
+
+            return data;
+        }
+    }
+
+    class QSUtility<T> : Utility<T> where T : IComparable<T>, ProductIF
+    {
+        public override List<T> sort(List<T> data)
+        {
 
 
             return data;
@@ -130,7 +143,9 @@ namespace Lab4
 
         public override List<T> sort(List<T> data)
         {
-             //Bubble sort Algo
+
+
+            //Bubble sort Algo
             for (int i = 0; i < data.Count; i++)
             {
                 for (int j = 0; j < data.Count - 1; j++)
@@ -140,7 +155,7 @@ namespace Lab4
                     if (temp1.CompareTo(temp2) > 0) //If first object greater than second object swap
                     {
                         //Swap
-                        data[i] = temp1;
+                        data[j+1] = temp1;
                         data[j] = temp2;
                     }
                 }
