@@ -25,13 +25,16 @@ namespace Lab4
             l.Add(new Desk(25.13, 3, "C"));
             l.Add(new Desk(5.85, 4, "D"));
 
+            for
             company.setList(l); //Set list to company for test
-
+            company.askUtility();//Sets up utility
+            company.mainSortingTest();
             
         }
     }
 
-    class XYZ {
+    class XYZ
+    {
 
         private Utility<Desk> u;
         private List<Desk> l;
@@ -41,11 +44,16 @@ namespace Lab4
         public void askUtility()
         {
             //Logic for assigning Utility
-            u = new Utility<Desk>();
+            u = new ProxyUtility<Desk>();
+        }
+
+        public void mainSortingTest()
+        {
+            if (l != null) { u.sort(l); } //Run sorting alorithm. 
         }
     }
 
-    class Utility<T> where T : IComparable<T> {
+    abstract class Utility<T> where T : IComparable<T>, ProductIF {
         private String sortName;
 
 
@@ -62,27 +70,8 @@ namespace Lab4
             this.sortName = sortName;
         }
 
-        public List<T> sort(List<T> data)
-        {
-            
-            //Bubble sort Algo
-            for(int i = 0; i < data.Count; i++)
-            {
-                for (int j = 0; j < data.Count; j++)
-                {
-                    T temp1 = data[j]; 
-                    T temp2 = data[j + 1];
-                    if(temp1.CompareTo(temp2) > 0) //If first object greater than second object swap
-                    {
-                        //Swap
-                        data[i] = temp1;
-                        data[j] = temp2; 
-                    }
-                }
-            }
+        abstract public List<T> sort(List<T> data);
 
-            return data; //returns stubbed list
-        }
 
         /**
          * Getter method for sortName attribute
@@ -91,12 +80,85 @@ namespace Lab4
         
     }
 
+    class ProxyUtility<T> : Utility<T> where T : IComparable<T>, ProductIF
+    {
+        private Utility<T> u; 
+
+        public ProxyUtility()
+        {
+            u = new BSUtility<T>(); //Delegate to the bubble sort Utility
+        }
+        public ProxyUtility(String sortName) : base(sortName) {
+            if (this.getSortName() == "Bubble Sort") //Check for Bubble Sort
+            {
+                u = new BSUtility<T>(); //Delegate to the bubble sort Utility
+            }
+            else if (this.getSortName() == "Quick Sort")
+            {
+                //Create a quicksort object
+            }
+
+        }
+
+        public override List<T> sort(List<T> data)
+        {
+            //Call delegated sort
+            data = u.sort(data); // Sorts data
+
+            //Logic for how to print?? 
+
+            if (u is BSUtility<T>) //Check for Bubble Sort
+            {
+                
+                foreach(T t in data) //Print logic for Bubble sort
+                {
+                    Console.WriteLine(t.getID() + " " + t.getName() + " " + t.getPrice());
+                }
+            }
+            else if (this.getSortName() == "Quick Sort")  //Check Quicksort
+            {
+                //Print logic for quick sort
+            }
+
+
+            return data;
+        }
+    }
+
+    class BSUtility<T> : Utility<T> where T : IComparable<T>, ProductIF
+    {
+
+        public override List<T> sort(List<T> data)
+        {
+             //Bubble sort Algo
+            for (int i = 0; i < data.Count; i++)
+            {
+                for (int j = 0; j < data.Count - 1; j++)
+                {
+                    T temp1 = data[j];
+                    T temp2 = data[j + 1];
+                    if (temp1.CompareTo(temp2) > 0) //If first object greater than second object swap
+                    {
+                        //Swap
+                        data[i] = temp1;
+                        data[j] = temp2;
+                    }
+                }
+            }
+
+            return data; //returns List
+        }
+
+    }
+
     interface ProductIF
     {
         double getPrice();
+        int getID();
+        string getName();
     }
 
-    class Desk : ProductIF, IComparable<Desk>   //I was a little confused if we were supposed to create a new type list or just this desk? Just Desk seemed to make more sense
+    class Desk : ProductIF, IComparable<Desk>   
     {
         private double price;
         private int ID;
