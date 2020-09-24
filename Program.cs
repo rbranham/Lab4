@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Web;
 /*
  * Lab 4 - Roger Branham,  
@@ -28,7 +29,7 @@ namespace Lab4
 
             company.setList(l); //Set list to company for test
             company.askUtility();//Sets up utility
-            company.mainSortingTest();
+            company.mainSortingTest();// Run the prescibed sort from the promt
             
         }
     }
@@ -43,8 +44,7 @@ namespace Lab4
 
         public void askUtility()
         {
-            //Logic for assigning Utility
-            u = new ProxyUtility<Desk>();
+            u = new ProxyUtility<Desk>("Quick Sort"); //specifices the quick sort algorithm
         }
 
         public void mainSortingTest()
@@ -95,7 +95,7 @@ namespace Lab4
             }
             else if (this.getSortName() == "Quick Sort")
             {
-                //Create a quicksort object
+                u = new QSUtility<T>(); //Delegate to Quick sort Utility
             }
 
         }
@@ -115,7 +115,7 @@ namespace Lab4
                     Console.WriteLine(t.getID() + " " + t.getName() + " " + t.getPrice());
                 }
             }
-            else if (this.getSortName() == "Quick Sort")  //Check Quicksort
+            else if (u is QSUtility<T>)  //Check Quicksort
             {
                 foreach (T t in data) //Print logic for Quicksort
                 {
@@ -133,9 +133,57 @@ namespace Lab4
         public override List<T> sort(List<T> data)
         {
 
-
+            quickSort(data, 0, data.Count);
             return data;
         }
+
+
+        /* Credit to https://codereview.stackexchange.com/questions/47128/quicksort-c-implementation for basis of algorithm */
+        static int partition(List<T> list, int left, int right)
+        {
+            int start = left;
+            T pivot = list[start];
+            left++;
+            right--;
+
+            while (true)
+            {
+                while (left <= right && list[left].CompareTo(pivot) <= 0)// while(left is less/equal than pivot) list[left].getPrice() <= pivot.getPrice()
+                    left++;
+
+                while (left <= right && list[left].CompareTo(pivot) > 0)// while(left is greater than pivot list[right].getPrice() > pivot
+                    right--;
+
+                if (left > right)
+                {
+                    list[start] = list[left - 1];
+                    list[left - 1] = pivot;
+
+                    return left;
+                }
+
+
+                T temp = list[left];
+                list[left] = list[right];
+                list[right] = temp;
+
+            }
+        }
+
+        static void quickSort(List<T> list, int left, int right)
+        {
+            if (list == null || list.Count <= 1)
+                return;
+
+            if (left < right)
+            {
+                int pivotIdx = partition(list, left, right);
+                quickSort(list, left, pivotIdx - 1);
+                quickSort(list, pivotIdx, right);
+            }
+        }
+
+
     }
 
     class BSUtility<T> : Utility<T> where T : IComparable<T>, ProductIF
