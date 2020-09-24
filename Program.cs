@@ -3,6 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Web;
+/*
+ * Lab 4 - Roger Branham,  
+ * In collaboration with Jessie Souders
+ */
 
 namespace Lab4
 {
@@ -34,6 +38,11 @@ namespace Lab4
 
         public void setList(List<Desk> l) { this.l = l; }
 
+        public void askUtility()
+        {
+            //Logic for assigning Utility
+            u = new Utility<Desk>();
+        }
     }
 
     class Utility<T> {
@@ -45,6 +54,9 @@ namespace Lab4
             sortName = "Bubble Sort"; //Set algorithm to bubble sort
         }
 
+        /**
+         * Creates a utility class initialized to a different algo
+         */
         public Utility(String sortName)
         {
             this.sortName = sortName;
@@ -52,11 +64,26 @@ namespace Lab4
 
         public List<T> sort(List<T> data)
         {
-            //Sort objects of type T ascendingly based on the price of T
+            
+            //Bubble sort Algo
+            for(int i = 0; i < data.Count; i++)
+            {
+                for (int j = 0; j < data.Count; j++)
+                {
+                    T temp1 = data[j]; //get first desk
+                    T temp2 = data[j + 1];
+                    if(temp1.CompareTo(temp2) > 0)
+                    {
+
+                    }
+                }
+            }
             return data; //stubbed to return list
         }
 
-        //Getter method for sortName attribute
+        /**
+         * Getter method for sortName attribute
+         */
         public String getSortName() { return sortName; }
         
     }
@@ -66,7 +93,7 @@ namespace Lab4
         double getPrice();
     }
 
-    class Desk : ProductIF, IComparable   //I was a little confused if we were supposed to create a new type list or just this desk? Just Desk seemed to make more sense
+    class Desk : ProductIF, IComparable<Desk>   //I was a little confused if we were supposed to create a new type list or just this desk? Just Desk seemed to make more sense
     {
         private double price;
         private int ID;
@@ -81,30 +108,9 @@ namespace Lab4
         }
         
         //Implement CompareTo method from IComparable interface
-        public int CompareTo(Object o)
+        public int CompareTo(Desk other)
         {
-            int r = 0; //Default is same
-
-            if (o is Desk) {//Check that object is a desk
-
-                Desk d = (Desk)o;
-
-                if (this.price > d.getPrice())
-                {
-                    r = 1;  // Greater than
-                }
-                else if (this.price < d.price)
-                {
-                    r = -1; //Less then 
-                }
-
-                
-            } else
-            {
-                throw new Exception();
-            }
-
-            return r;
+            return price.CompareTo(other.getPrice()); //simple version
         }
 
 
